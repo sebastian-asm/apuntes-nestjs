@@ -19,18 +19,24 @@ export class PokemonService {
     private readonly pokemonModel: Model<Pokemon>
   ) {}
 
+  // centralizar el manejo de errores no controlados
+  private handleExceptions(error: any) {
+    if (error.code === 11000) {
+      throw new BadRequestException(
+        `Ya existe el Pokémon: ${JSON.stringify(error.keyValue)}`
+      )
+    } else {
+      throw new InternalServerErrorException('Error al procesar los datos')
+    }
+  }
+
   async create(createPokemonDto: CreatePokemonDto) {
     createPokemonDto.name = createPokemonDto.name.toLowerCase()
     try {
       const pokemon = await this.pokemonModel.create(createPokemonDto)
       return pokemon
     } catch (error) {
-      if (error.code === 11000) {
-        const { name } = error.keyValue
-        throw new BadRequestException(`Ya existe el Pokémon: ${name}`)
-      } else {
-        throw new InternalServerErrorException('Error al crear el Pokémon')
-      }
+      this.handleExceptions(error)
     }
   }
 
@@ -39,7 +45,7 @@ export class PokemonService {
   }
 
   async findOne(term: string) {
-    let pokemon = Pokemon
+    let pokemon: Pokemon
 
     // buscar por número
     if (!isNaN(+term)) {
@@ -61,11 +67,29 @@ export class PokemonService {
     return pokemon
   }
 
-  update(id: number, updatePokemonDto: UpdatePokemonDto) {
-    return `This action updates a #${id} pokemon`
+  async update(term: string, updatePokemonDto: UpdatePokemonDto) {
+    const pokemon = await this.findOne(term)
+
+    try {
+      await pokemon.updateOne(
+        {
+          ...updatePokemonDto,
+          name: updatePokemonDto.name
+            ? updatePokemonDto.name.toLowerCase()
+            : updatePokemonDto.name,
+        },
+        { new: true }
+      )
+
+      // si no se devuelve así, muestra la respuesta del objetvo de mongoose
+      return { ...pokemon.toJSON(), ...updatePokemonDto }
+    } catch (error) {
+      this.handleExceptions(error)
+    }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} pokemon`
+  async remove(id: string) {
+    const pokemon = await this.findOne(id)
+    await pokemon.deleteOne()
   }
 }
