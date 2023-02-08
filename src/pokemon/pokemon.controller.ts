@@ -13,13 +13,20 @@ import {
 import { PokemonService } from './pokemon.service'
 import { CreatePokemonDto } from './dto/create-pokemon.dto'
 import { UpdatePokemonDto } from './dto/update-pokemon.dto'
+import { ParseMongoIdPipe } from 'src/common/pipes/parse-mongo-id/parse-mongo-id.pipe'
 
+// estará pendiente de la ruta /pokemon
 @Controller('pokemon')
 export class PokemonController {
-  constructor(private readonly pokemonService: PokemonService) {}
+  constructor(
+    // inyección de servicio
+    private readonly pokemonService: PokemonService
+  ) {}
 
   // personalizar el código de la respuesta
   // @HttpCode(200)
+  // permite tomar las validaciones del dto, pero solo en esta petición
+  // @UsePipes(ValidationPipe)
   @Post()
   @HttpCode(HttpStatus.CREATED)
   create(@Body() createPokemonDto: CreatePokemonDto) {
@@ -38,6 +45,7 @@ export class PokemonController {
 
   @Patch(':term')
   update(
+    // @param permite obtener el parámetro 'term' de la url
     @Param('term') term: string,
     @Body() updatePokemonDto: UpdatePokemonDto
   ) {
@@ -45,7 +53,8 @@ export class PokemonController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
+  // pipe personalizado
+  remove(@Param('id', ParseMongoIdPipe) id: string) {
     return this.pokemonService.remove(id)
   }
 }

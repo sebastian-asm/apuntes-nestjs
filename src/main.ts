@@ -7,10 +7,12 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule)
   // se agrega el prefijo 'api' en todos los endpoints
   app.setGlobalPrefix('api')
-
+  // validación del dto a nivel global de la app
   app.useGlobalPipes(
     new ValidationPipe({
+      // solo deja la data del dto, cualquier otro dato es removido
       whitelist: true,
+      // devuelve error cuando se reciben propiedades no definidas en el dto
       forbidNonWhitelisted: true,
     })
   )

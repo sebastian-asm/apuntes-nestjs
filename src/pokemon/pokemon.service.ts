@@ -61,7 +61,7 @@ export class PokemonService {
     }
 
     if (!pokemon) {
-      throw new NotFoundException(`Pokémon no encontrado`)
+      throw new NotFoundException('Pokémon no encontrado')
     }
 
     return pokemon
@@ -89,7 +89,12 @@ export class PokemonService {
   }
 
   async remove(id: string) {
-    const pokemon = await this.findOne(id)
-    await pokemon.deleteOne()
+    // const pokemon = await this.findOne(id)
+    // await pokemon.deleteOne()
+    const { deletedCount } = await this.pokemonModel.deleteOne({ _id: id })
+    if (deletedCount === 0) {
+      throw new BadRequestException('Pokémon no encontrado')
+    }
+    return { id }
   }
 }
