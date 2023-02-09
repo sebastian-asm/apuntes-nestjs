@@ -14,6 +14,11 @@ async function bootstrap() {
       whitelist: true,
       // devuelve error cuando se reciben propiedades no definidas en el dto
       forbidNonWhitelisted: true,
+      // transformar los datos recibidos según como se especifica en el dto
+      transform: true,
+      transformOptions: {
+        enableImplicitConversion: true,
+      },
     })
   )
   await app.listen(3000)
