@@ -1,0 +1,32 @@
+services:
+  nest-intro:
+    depends_on:
+      - db
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    image: nest-intro-docker
+    container_name: nest-intro
+    # reiniciar el contenedor si se detiene
+    restart: always 
+    # si no se especifica archivo de variables de entorno por default toma .env
+    ports:
+      - "${PORT}:${PORT}"
+    # working_dir: /var/www/pokedex
+    environment:
+      MONGODB: ${MONGODB}
+      PORT: ${PORT}
+      DEFAULT_LIMIT: ${DEFAULT_LIMIT}
+    # volumes:
+    #   - ./:/var/www/pokedex
+
+  db:
+    image: mongo
+    container_name: mongo-nest-intro
+    restart: always
+    ports:
+      - 27017:27017
+    environment:
+      MONGODB_DATABASE: nest-intro
+    volumes:
+      - ./mongo:/data/db

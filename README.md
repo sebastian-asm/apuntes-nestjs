@@ -7,9 +7,28 @@
 
 ## Stack de tecnologías utilizadas
 
-- NestJS
+- NestJS y Typescript
 - MongoDB
 - Docker
+
+## Correr en modo **producción**
+
+1. Tener creado el archivo `.env.prod` con las variables de entorno.
+
+2. Crear y ejecutar la imagen de Docker en modo detach: `docker-compose -f docker-compose.prod.yml --env-file .env.prod up -d --build`
+
+## Endpoints
+
+Base: https://nest-intro-production.up.railway.app
+
+| Método | Endpoint              | Descripción                                         |
+| ------ | --------------------- | --------------------------------------------------- |
+| GET    | /api/seed             | Agregar datos de prueba                             |
+| GET    | /api/pokemon          | Obtener todo el listado                             |
+| GET    | /api/pokemon/:termino | Obtener un pkmn por id, número o nombre             |
+| POST   | /api/pokemon          | Crear pkmn (name y no)                              |
+| PATCH  | /api/pokemon/:termino | Actualizar pkmn por id, número o nombre (name o no) |
+| DELETE | /api/pokemon/:termino | Eliminar pkmn por id, número o nombre               |
 
 # Notas sobre NestJS
 

@@ -1,0 +1,8 @@
+# carpetas
+dist/
+mongo/
+node_modules/
+.git/
+
+# archivos
+.gitignore
